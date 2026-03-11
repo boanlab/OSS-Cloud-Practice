@@ -1,0 +1,111 @@
+# 🐳 Docker Core Commands Cheat Sheet
+
+> [cite_start]💡 **Tip:** 본 강의 자료의 설치 과정은 **Ubuntu 24.04 LTS** 환경을 기준으로 작성되었습니다[cite: 7, 10]. Mac 환경에서 실습하시는 분들은 터미널 명령어 대신 [Docker Desktop for Mac]을 설치한 후, **2번(컨테이너 실행 및 제어)** 부터 진행해 주세요.
+
+---
+
+## 🛠️ 1. 도커 엔진 설치 및 초기 설정 (Ubuntu)
+
+[cite_start]패키지 업데이트 및 구버전 충돌 방지를 위한 설정입니다[cite: 19, 26].
+
+```bash
+# 1. 패키지 인덱스 업데이트 및 필수 패키지 설치
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg
+
+# 2. 기존 구버전 도커 패키지 제거 (충돌 방지)
+sudo apt-get remove -y docker docker-engine docker.io containerd runc || true
+
+# 3. Docker 공식 GPG 키 등록 및 저장소 추가
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL [https://download.docker.com/linux/ubuntu/gpg](https://download.docker.com/linux/ubuntu/gpg) | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] [https://download.docker.com/linux/ubuntu](https://download.docker.com/linux/ubuntu) $(./etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 4. 도커 엔진 설치
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# 5. 권한 설정 (sudo 없이 도커 사용하기)
+sudo usermod -aG docker $USER
+newgrp docker
+docker run --rm hello-world
+
+
+## 🚀 2. 컨테이너 실행 및 제어 (Lifecycle)
+컨테이너를 생성, 시작, 중지, 삭제하는 핵심 명령어들입니다.
+
+# 단일 컨테이너 실행 (백그라운드, 포트 매핑, 볼륨 마운트)
+docker run -d --name web -p 8080:80 -v /opt/hello:/usr/share/nginx/html nginx:latest
+
+# 실행 중인 컨테이너 정상 종료 (Graceful Shutdown)
+docker stop [container]
+
+# 응답 없는 컨테이너 강제 종료 (Kill)
+docker kill [container]
+
+# 모든 컨테이너 일괄 중지
+docker stop $(docker ps -a -q)
+
+# 컨테이너 일시정지 및 재개
+docker pause my-web-server
+docker unpause my-web-server
+
+## 🔍 3. 상태 모니터링 및 내부 접근
+
+# 전체 컨테이너 목록 확인 (정지된 것 포함)
+docker ps -a
+
+# 특정 조건에 맞는 컨테이너만 필터링하여 출력
+docker ps --filter "status=running" --format "table {{.ID}}\t{{.Image}}\t{{.Status}}"
+
+# 컨테이너 상세 메타데이터 정보 확인 (JSON 포맷)
+docker inspect [container]
+
+# 컨테이너 리소스(CPU, 메모리 등) 사용량 실시간 확인
+docker stats
+
+# 실시간 로그 스트리밍 (타임스탬프 포함)
+docker logs -f --tail 10 --timestamps web-server
+
+# 실행 중인 컨테이너 내부에 새로운 셸(프로세스) 생성하여 접속
+docker exec -it [container] bash
+
+# 호스트와 컨테이너 간 파일 복사 (호스트 -> 컨테이너)
+docker cp ./index.html my-nginx:/usr/share/nginx/html/index.html
+
+## 📦 4. 이미지 관리 및 레지스트리
+
+# Docker Hub 레지스트리 로그인
+docker login
+
+# 이미지 다운로드 및 업로드
+docker pull nginx:1.21
+docker push myuser/my-app:v1
+
+# 로컬에 저장된 도커 이미지 목록 확인
+docker images
+
+# 이미지에 새로운 태그(버전/이름) 부여
+docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+
+# 개별 이미지 삭제 (사용 중이지 않은 경우)
+docker rmi [IMAGE]
+
+# 사용되지 않는(Dangling) 이미지 일괄 정리
+docker image prune
+
+
+## 💾 5. 데이터 정리 및 백업 (Migration)
+
+# 중지된(Stopped) 특정 컨테이너 삭제
+docker rm my-web-server
+
+# 중지된 모든 컨테이너 일괄 삭제 (디스크 확보)
+docker container prune
+
+# 이미지를 tar 아카이브 파일로 백업 (폐쇄망 이관 시 유용)
+docker save -o nginx_backup.tar nginx:latest
+
+# tar 파일로부터 이미지를 도커 엔진에 로드
+docker load -i nginx_backup.tar
