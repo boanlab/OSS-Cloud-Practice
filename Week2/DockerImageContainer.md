@@ -1,3 +1,5 @@
+# 오픈소스SW(클라우드)
+
 # 02. 도커 이미지와 컨테이너
 
 > (본 실습은 Ubuntu 24.04 VM 환경을 기준으로 작성되었습니다.)
@@ -14,11 +16,15 @@ sudo apt-get install -y ca-certificates curl gnupg
 <img width="1000" height="451" alt="image" src="https://github.com/user-attachments/assets/fda4ab00-bbc1-4d88-89cb-8569316b8bbb" />
 <img width="1000" height="451" alt="image" src="https://github.com/user-attachments/assets/40d44eef-5e4a-4890-81be-b3f857e16279" />
 
+---
+
 ```bash
 # 2. 기존 구버전 도커 패키지 제거 (기존에 도커가 설치되어 있었다면 꼭 제거할 것)
 sudo apt-get remove -y docker docker-engine docker.io containerd runc || true
 ```
 <img width="1000" height="143" alt="image" src="https://github.com/user-attachments/assets/d3624711-9970-472c-9470-13b6c8030e61" />
+
+---
 
 ```bash
 # 3. Docker 공식 GPG 키 등록 및 저장소 추가
@@ -32,6 +38,8 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 ```
 <img width="1000" height="143" alt="image" src="https://github.com/user-attachments/assets/60d3ccb9-2f08-4774-b778-438996612dad" />
 
+---
+
 ```bash
 # 4. 도커 엔진 설치
 sudo apt-get update
@@ -39,6 +47,8 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 ```
 <img width="1000" height="186" alt="image" src="https://github.com/user-attachments/assets/48c21624-4213-41b4-acc0-0597fc6f0cef" />
 <img width="1000" height="454" alt="image" src="https://github.com/user-attachments/assets/eb926801-3dc6-4b8b-a31c-b93352e35b20" />
+
+---
 
 ```bash
 # 5. 설치 확인 
@@ -48,6 +58,8 @@ sudo docker run --rm hello-world
 <img width="1000" height="46" alt="image" src="https://github.com/user-attachments/assets/534175ed-f341-47e9-9b5c-8ee239106bda" />
 <img width="1000" height="453" alt="image" src="https://github.com/user-attachments/assets/cfacf4a2-3532-4b40-a5ce-39c27be2b84b" />
 
+---
+
 ```bash
 # 6. 현재 사용자에게 docker 그룹 권한 부여 (이후 sudo 생략 가능)
 sudo usermod -aG docker $USER
@@ -55,11 +67,15 @@ newgrp docker
 ```
 <img width="1000" height="68" alt="image" src="https://github.com/user-attachments/assets/365c9ee2-2cfb-4917-bef4-e54b850f4f09" />
 
+---
+
 ```bash
 # 7. 권한 적용 후 재검증
 docker run --rm hello-world
 ```
 <img width="1000" height="427" alt="image" src="https://github.com/user-attachments/assets/ea6a3439-11e0-4694-adcb-8af109fbecc6" />
+
+---
 
 ### 컨테이너 생성 및 실행 (`docker run`)
 | 옵션 | 설명 |
@@ -87,12 +103,16 @@ docker login -u 본인 Username
 ```
 <img width="1000" height="141" alt="image" src="https://github.com/user-attachments/assets/7e9af7fd-4beb-47c3-8d52-65c8f70a11b2" />
 
+---
+
 ```bash
 # 2. 특정 버전의 Nginx 및 실습용 boanlab 이미지 다운로드
 docker pull nginx:1.21
 docker pull boanlab/hello-world:latest
 ```
 <img width="1000" height="443" alt="image" src="https://github.com/user-attachments/assets/b4c9c1f7-6d84-40f4-a931-baa4b34ab784" />
+
+---
 
 ```bash
 # 3. 로컬에 저장된 이미지 목록 확인
@@ -102,6 +122,8 @@ docker images nginx # nginx 이미지만 조회
 <img width="1000" height="137" alt="image" src="https://github.com/user-attachments/assets/7ba33191-a7c2-4dc3-a5ae-7bc7e7ad7d24" />
 <img width="1000" height="204" alt="image" src="https://github.com/user-attachments/assets/06e39cdd-fc7a-4cae-926a-1d74fc0209ec" />
 
+---
+
 ```bash
 # 4. 이미지 필터링 및 포맷팅 조회
 docker images | grep nginx #
@@ -109,6 +131,8 @@ docker images --filter "reference=nginx:*"
 docker images --format "{{.Repository}}:{{.Tag}}"
 ```
 <img width="1000" height="220" alt="image" src="https://github.com/user-attachments/assets/bd72a3f0-e3d7-40c3-9b65-640b089f8cc7" />
+
+---
 
 ```bash
 # 5. 이미지에 새로운 태그 부여 (버전 관리/별칭 생성)
@@ -122,10 +146,14 @@ docker push myrepo/nginx:v1
 ```
 <img width="1000" height="54" alt="image" src="https://github.com/user-attachments/assets/c767089c-ba9a-486e-b139-69caf2ded7d6" />
 
+---
+
 ```bash
 # 7. 이미지 레이어 구조 및 히스토리 분석
 docker history nginx:1.21
 <img width="1000" height="323" alt="image" src="https://github.com/user-attachments/assets/168add22-7d0f-48ff-a905-ce0425a3df52" />
+
+---
 
 ```
 ### 이미지 조회 (`docker images`)
@@ -145,11 +173,15 @@ sudo sh -c 'echo "Hello from the host!" > /opt/hello/test.txt'
 ```
 <img width="1000" height="102" alt="image" src="https://github.com/user-attachments/assets/7ed00883-3881-4d19-989e-e1f5df596cd8" />
 
+---
+
 ```bash
 # 2. 컨테이너 생성 (실행 준비 프로세스 확인용)
 docker create --name web-ready nginx:1.21
 ```
 <img width="1000" height="156" alt="image" src="https://github.com/user-attachments/assets/74b6a2c7-065d-47a7-9f87-9bcebe077112" />
+
+---
 
 ```bash
 # 3. Nginx 웹 서버 컨테이너 백그라운드 실행
@@ -161,6 +193,8 @@ docker run -d --name web -p 8081:80 -v /opt/hello:/usr/share/nginx/html nginx:1.
 curl http://localhost:8081/test.txt
 ```
 <img width="1000" height="170" alt="image" src="https://github.com/user-attachments/assets/5434d30e-a744-4bca-8aea-a23d40e80d79" />
+
+---
 
 ```bash
 # 5. [참고] 이미지 태깅 및 환경변수 주입 실습
@@ -180,8 +214,9 @@ docker exec env-file-test env | grep API_KEY
 ```
 <img width="1004" height="360" alt="image" src="https://github.com/user-attachments/assets/9d17c1ec-ed16-4296-a798-3593c3ddeee8" />
 
+---
 
-## Step 4. 상태 모니터링 및 컨테이너 내부 제어 (PDF 9~11, 15~17쪽)
+## Step 4. 상태 모니터링 및 컨테이너 내부 제어 (PDF 9 ~ 11, 15 ~ 17쪽)
 실행 중인 컨테이너의 상태를 점검하고 내부로 진입하여 작업을 수행합니다.
 ```bash
 
@@ -196,20 +231,33 @@ docker ps -q
 # 2. 필터링 및 테이블 형태 포맷팅 출력
 docker ps --filter "status=running" --format "table {{.ID}}\t{{.Image}}\t{{.Status}}"
 ```
+![figure1](./images/figure1.png)
+---
 
 ```bash
 # 3. 컨테이너 상세 정보(JSON) 확인 및 특정 필드 추출
 docker inspect web
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' web
 ```
+![figure2](./images/figure2.png)
+![figure3](./images/figure3.png)
+
+---
+
 ```bash
 # 4. 리소스 사용량 실시간 확인 (종료하려면 Ctrl+C)
 docker stats
 ```
+![figure4](./images/figure4.png)
+
 ```bash
 # 5. 실시간 로그 스트리밍 (종료하려면 Ctrl+C)
 docker logs -f --tail 10 --timestamps web
 ```
+![figure5](./images/figure5.png)
+
+---
+
 ```bash
 
 # 6. 호스트와 컨테이너 간 파일 복사
@@ -221,6 +269,9 @@ docker cp web:/var/log/nginx/access.log ./access.log
 # 복사된 로그 파일 상태 및 크기 확인
 ls -l ./access.log #
 ```
+![figure6](./images/figure6.png)
+---
+
 ```bash
 # 7. 컨테이너 접속 (선택적 실행)
 # 새로운 셸을 생성하여 내부 진입 (나올 때는 'exit' 입력)
@@ -229,6 +280,9 @@ docker exec -it web bash
 # 메인 프로세스(PID 1)에 연결 (주의: Ctrl+C 입력 시 컨테이너가 종료됨)
 docker attach web
 ```
+![figure7](./images/figure7.png)
+---
+
 ### 로그 확인 (`docker logs`)
 | 옵션 | 설명 |
 | :--- | :--- |
@@ -255,18 +309,23 @@ docker attach web
 구동 중인 컨테이너의 상태를 변경합니다.
 
 ```bash
-
-# 1. 프로세스 일시정지 및 재개
+# 1. 프로세스 다시 시작, 일시정지 및 재개
+docker start web
 docker pause web
 docker unpause web
+```
 
+![figure8](./images/figure8.png)
+---
+```bash
 # 2. 컨테이너 재시작
 docker restart web
 
 # 3. 30초 대기 후 정상 종료(Graceful) 및 재시작
 docker restart -t 30 web
-
 ```
+![figure9](./images/figure9.png)
+
 ### 유지보수 및 제어 (`docker restart`, `docker exec`)
 
 #### `docker restart`
@@ -284,6 +343,8 @@ docker restart -t 30 web
 docker commit -m "backup" web web:backup
 docker images | grep web # 저장된 커밋 이미지 확인
 ```
+![figure10](./images/figure10.png)
+---
 ```bash
 
 # [방법 B] 컨테이너 파일시스템 전체를 tar 파일로 추출 및 복원 (Export/Import)
@@ -291,14 +352,17 @@ docker export web > web.tar
 ls -lh web.tar # 추출한 아카이브 파일 용량 확인
 cat web.tar | docker import - web:imported
 ```
+![figure11](./images/figure11.png)
+---
 ```bash
 
 # [방법 C] 기존 이미지를 tar 파일로 백업 및 로드 (Save/Load)
 docker save -o nginx_backup.tar nginx:1.21
 ls -lh nginx_backup.tar # 백업 파일 크기 확인
 docker load -i nginx_backup.tar
-
 ```
+![figure12](./images/figure12.png)
+---
 ### 백업, 복원 및 삭제
 
 #### `docker save` / `docker load`
@@ -315,36 +379,52 @@ docker load -i nginx_backup.tar
 
 # 1. 단일 컨테이너 종료 (정상 종료 및 강제 종료)
 docker stop web
+docker ps -a
+docker start web
 docker kill web
 ```
+![figure13](./images/figure13.png)
+---
 ```bash
 
 # 2. 실행 중인 모든 컨테이너 일괄 중지
 docker stop $(docker ps -a -q)
+docker ps -a
 ```
+![figure14](./images/figure14.png)
+---
 ```bash
-
 # 3. 컨테이너 개별 삭제 및 강제 삭제
 docker rm web
 docker rm -f web-ready # Step 3에서 create로 만든 컨테이너 삭제
+docker ps -a
 ```
+![figure15](./images/figure15.png)
+---
 ```bash
 
 # 4. 중지된 모든 컨테이너 일괄 삭제
 docker container prune -f
+docker ps -a
 ```
+![figure16](./images/figure16.png)
+---
 ```bash
-
 # 5. 사용하지 않는 이미지 삭제
 # (Step 2에서 본인 아이디로 변경했다면 myrepo 부분을 수정해주세요)
 docker rmi myrepo/nginx:v1
+docker images
 ```
+![figure17](./images/figure17.png)
+---
 ```bash
 
 # 6. 이름 없는(Dangling) 이미지 일괄 정리
 docker image prune -f
-
 ```
+![figure18](./images/figure18.png)
+---
+
 #### `docker rm/rmi` / `docker prune`
 | 옵션 | 설명 |
 | :--- | :--- |
